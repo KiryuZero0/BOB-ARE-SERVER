@@ -1,0 +1,41 @@
+body {
+    background-color: #1a1a2e; /* fundal întunecat */
+    color: #eaeaea;
+    font-family: 'Press Start 2P', cursive;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #16213e;
+    border: 2px solid #0f3460;
+    border-radius: 8px;
+}
+
+h1 {
+    color: #e94560;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 15px;
+}
+
+nav a {
+    color: #e94560;
+    text-decoration: none;
+}
+
+button {
+    background-color: #e94560;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-top: 10px;
+}
