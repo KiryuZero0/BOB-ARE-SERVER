@@ -9,31 +9,38 @@ const PORT = 5000;
 app.use(express.json());
 app.use(cors());
 
+// Deschide sau creează baza de date
 const db = new sqlite3.Database('./server/database.sqlite', (err) => {
     if (err) {
-        console.error("Eroare la deschiderea bazei de date:", err.message);
+        console.error('Eroare la deschiderea bazei de date:', err.message);
     } else {
-        console.log("Conexiunea la baza de date a fost realizată.");
+        console.log('Conexiunea la baza de date a fost realizată.');
 
-        db.run(`CREATE TABLE IF NOT EXISTS users (
-                                                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                                     username TEXT UNIQUE,
-                                                     password TEXT
-                )`);
+        // Crează tabela utilizatori
+        db.run(`
+            CREATE TABLE IF NOT EXISTS users (
+                                                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                                 username TEXT UNIQUE,
+                                                 password TEXT
+            )
+        `);
 
-        db.run(`CREATE TABLE IF NOT EXISTS esps (
-                                                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                                    device_name TEXT,
-                                                    status TEXT,
-                                                    data TEXT
-                )`);
+        // Crează tabela pentru ESP-uri
+        db.run(`
+            CREATE TABLE IF NOT EXISTS esps (
+                                                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                                device_name TEXT,
+                                                status TEXT,
+                                                data TEXT
+            )
+        `);
     }
 });
 
+// Endpoint pentru înregistrare
 app.post('/register', (req, res) => {
     const { username, password } = req.body;
     const query = `INSERT INTO users (username, password) VALUES (?, ?)`;
-
     db.run(query, [username, password], function(err) {
         if (err) {
             return res.status(400).json({ error: err.message });
@@ -42,10 +49,10 @@ app.post('/register', (req, res) => {
     });
 });
 
+// Endpoint pentru login
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
     const query = `SELECT * FROM users WHERE username = ? AND password = ?`;
-
     db.get(query, [username, password], (err, row) => {
         if (err) {
             return res.status(400).json({ error: err.message });
@@ -58,6 +65,7 @@ app.post('/login', (req, res) => {
     });
 });
 
+// Endpoint pentru obținerea ESP-urilor
 app.get('/esps', (req, res) => {
     const query = `SELECT * FROM esps`;
     db.all(query, [], (err, rows) => {
@@ -68,6 +76,7 @@ app.get('/esps', (req, res) => {
     });
 });
 
+// Optional: Endpoint pentru adăugare ESP
 app.post('/esps', (req, res) => {
     const { device_name, status, data } = req.body;
     const query = `INSERT INTO esps (device_name, status, data) VALUES (?, ?, ?)`;

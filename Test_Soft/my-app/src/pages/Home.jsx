@@ -1,26 +1,37 @@
+// src/pages/Home.jsx
 import React from 'react';
-import { Container, Box, Typography } from '@mui/material';
+import { Box, Typography, Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
+    const navigate = useNavigate();
+
     return (
-        <Container maxWidth="md" sx={{ mt: 8 }}>
-            <Box
-                sx={{
-                    bgcolor: '#1976d2',
-                    color: '#fff',
-                    p: 4,
-                    borderRadius: 2,
-                    textAlign: 'center',
-                }}
+        <Box
+            sx={{
+                bgcolor: '#000000',
+                border: '4px solid #00ffcc',
+                p: 4,
+                borderRadius: 2,
+                textAlign: 'center',
+                boxShadow: '0 0 20px #00ffcc'
+            }}
+        >
+            <Typography variant="h4" gutterBottom sx={{ color: '#00ffcc' }}>
+                Welcome to Retro Game App
+            </Typography>
+            <Typography variant="body1" sx={{ color: '#ffffff', mb: 2 }}>
+                Aceasta este pagina principală a aplicației, stilată ca un joc retro.
+            </Typography>
+            <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => navigate('/auth')}
+                sx={{ fontFamily: '"Press Start 2P", cursive' }}
             >
-                <Typography variant="h4" gutterBottom>
-                    Welcome to Retro App
-                </Typography>
-                <Typography variant="body1">
-                    Acesta este Home-ul aplicației.
-                </Typography>
-            </Box>
-        </Container>
+                Autentificare/Inregistrare
+            </Button>
+        </Box>
     );
 };
 

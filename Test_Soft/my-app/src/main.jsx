@@ -4,14 +4,16 @@ import App from './App';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
+// Temă personalizată retro
 const theme = createTheme({
     palette: {
-        primary: {
-            main: '#1976d2', // Poți alege culoarea primară
-        },
-        secondary: {
-            main: '#dc004e', // Poți alege culoarea secundară
-        },
+        primary: { main: '#00ffcc' }, // neon teal
+        secondary: { main: '#ff00ff' }, // magenta neon
+        background: { default: '#000000' }, // fundal negru
+        text: { primary: '#ffffff' },
+    },
+    typography: {
+        fontFamily: '"Press Start 2P", cursive',
     },
 });
 

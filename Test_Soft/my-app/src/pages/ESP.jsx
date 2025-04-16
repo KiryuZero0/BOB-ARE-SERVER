@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Box, Typography, List, ListItem, Paper } from '@mui/material';
+import { Box, Typography, List, ListItem, Paper } from '@mui/material';
 
 const ESP = () => {
     const [esps, setEsps] = useState([]);
@@ -13,35 +13,34 @@ const ESP = () => {
     }, []);
 
     return (
-        <Container maxWidth="md" sx={{ mt: 8 }}>
-            <Box
-                sx={{
-                    bgcolor: '#1976d2',
-                    color: '#fff',
-                    p: 4,
-                    borderRadius: 2,
-                    textAlign: 'center',
-                }}
-            >
-                <Typography variant="h5" gutterBottom>
-                    ESP-uri conectate
+        <Box
+            sx={{
+                bgcolor: '#000000',
+                border: '4px solid #00ffcc',
+                p: 4,
+                borderRadius: 2,
+                textAlign: 'center',
+                boxShadow: '0 0 20px #00ffcc'
+            }}
+        >
+            <Typography variant="h5" gutterBottom sx={{ color: '#00ffcc' }}>
+                ESP-uri conectate
+            </Typography>
+            {message && (
+                <Typography variant="body1" sx={{ color: '#ffffff' }}>
+                    {message}
                 </Typography>
-                {message && (
-                    <Typography variant="body1">
-                        {message}
-                    </Typography>
-                )}
-                <List>
-                    {esps.map((esp) => (
-                        <ListItem key={esp.id}>
-                            <Paper sx={{ p: 2, width: '100%' }}>
-                                {esp.device_name} - {esp.status} - {esp.data}
-                            </Paper>
-                        </ListItem>
-                    ))}
-                </List>
-            </Box>
-        </Container>
+            )}
+            <List>
+                {esps.map((esp) => (
+                    <ListItem key={esp.id}>
+                        <Paper sx={{ p: 2, width: '100%', bgcolor: '#ffffff', color: '#000000', fontFamily: '"Press Start 2P", cursive' }}>
+                            {esp.device_name} - {esp.status} - {esp.data}
+                        </Paper>
+                    </ListItem>
+                ))}
+            </List>
+        </Box>
     );
 };
 
