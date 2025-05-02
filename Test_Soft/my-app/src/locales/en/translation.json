@@ -1,0 +1,20 @@
+
+{
+  "home": "Home",
+  "login": "Login",
+  "register": "Register",
+  "esp": "ESP Devices",
+  "dashboard": "Dashboard",
+  "profile": "Profile",
+  "logout": "Logout",
+  "toggle_theme": "Toggle dark/light mode",
+  "select_device": "Select device",
+  "all": "All",
+  "loading": "Loading...",
+  "submit": "Submit",
+  "username": "Username",
+  "password": "Password",
+  "confirm_password": "Confirm Password",
+  "have_account": "Already have an account? Login",
+  "no_account": "Don't have an account? Register"
+}

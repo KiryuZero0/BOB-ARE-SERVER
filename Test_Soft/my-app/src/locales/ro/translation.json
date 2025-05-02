@@ -1,0 +1,19 @@
+{
+  "home": "Home",
+  "login": "Autentificare",
+  "register": "Înregistrare",
+  "esp": "ESP-uri",
+  "dashboard": "Dashboard",
+  "profile": "Profil",
+  "logout": "Logout",
+  "toggle_theme": "Schimbă mod întuneric/luminos",
+  "select_device": "Selectează device",
+  "all": "Toate",
+  "loading": "Se încarcă...",
+  "submit": "Trimite",
+  "username": "Username",
+  "password": "Password",
+  "confirm_password": "Confirm Password",
+  "have_account": "Ai deja cont? Autentifică-te",
+  "no_account": "Nu ai cont? Înregistrează-te"
+}

@@ -1,43 +1,49 @@
 // src/theme.js
 import { createTheme } from '@mui/material/styles';
 
-const theme = createTheme({
-    palette: {
-        primary: { main: '#00ffcc' },   // neon teal
-        secondary: { main: '#ff00ff' }, // magenta neon
-        background: { default: '#000000' },
-        text: { primary: '#ffffff' },
-    },
-    typography: {
-        fontFamily: '"Press Start 2P", cursive',
-    },
-    components: {
-        MuiCssBaseline: {
-            styleOverrides: {
-                '@global': {
-                    '@keyframes neon': {
-                        '0%': { textShadow: '0 0 5px #00ffcc, 0 0 10px #00ffcc' },
-                        '100%': { textShadow: '0 0 20px #00ffcc, 0 0 30px #00ffcc' },
-                    },
-                    body: {
-                        backgroundColor: '#000',
-                        margin: 0,
-                    },
-                },
-            },
-        },
-        MuiButton: {
-            styleOverrides: {
-                root: {
-                    border: '2px solid',
-                    transition: 'all 0.3s ease',
-                    '&:hover': {
-                        boxShadow: '0 0 10px currentColor, 0 0 20px currentColor',
-                    },
-                },
-            },
-        },
-    },
-});
+export default function getTheme(mode) {
+    const isDark = mode === 'dark';
 
-export default theme;
+    return createTheme({
+        palette: {
+            mode,
+            primary: { main: '#00ffcc' },
+            secondary: { main: '#ff00ff' },
+            background: {
+                default: isDark ? '#121212' : '#000000',
+                paper: isDark ? '#1e1e1e' : '#111111'
+            },
+            text: {
+                primary: isDark ? '#ffffff' : '#ffffff',
+                secondary: isDark ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.7)'
+            }
+        },
+        typography: {
+            fontFamily: '"Press Start 2P", cursive'
+        },
+        components: {
+            MuiCssBaseline: {
+                styleOverrides: {
+                    '@global': {
+                        '@keyframes neon': {
+                            '0%': { textShadow: `0 0 5px ${isDark ? '#00ffcc' : '#00ffcc'}` },
+                            '100%': { textShadow: `0 0 20px ${isDark ? '#00ffcc' : '#00ffcc'}` }
+                        },
+                        body: { margin: 0 }
+                    }
+                }
+            },
+            MuiButton: {
+                styleOverrides: {
+                    root: {
+                        border: '2px solid',
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                            boxShadow: '0 0 10px currentColor, 0 0 20px currentColor'
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
