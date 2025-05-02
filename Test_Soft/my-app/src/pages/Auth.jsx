@@ -1,88 +1,91 @@
+// src/pages/Auth.jsx
 import React, { useState } from 'react';
-import { Box, Typography, TextField, Button } from '@mui/material';
+import {
+    Box, Typography, TextField, Button, Card, CardContent
+} from '@mui/material';
 
-const Auth = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [isRegister, setIsRegister] = useState(true);
-    const [message, setMessage] = useState('');
+export default function Auth() {
+    const [u, setU] = useState('');
+    const [p, setP] = useState('');
+    const [reg, setReg] = useState(true);
+    const [msg, setMsg] = useState('');
 
-    const handleSubmit = async (e) => {
+    const handle = async e => {
         e.preventDefault();
-        const endpoint = isRegister ? 'register' : 'login';
+        const ep = reg ? 'register' : 'login';
         try {
-            const res = await fetch(`http://localhost:5000/${endpoint}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password }),
+            const res = await fetch(`http://localhost:5000/${ep}`, {
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({ username:u,password:p })
             });
             const data = await res.json();
-            if (res.ok) {
-                setMessage(`Succes: ${JSON.stringify(data)}`);
-            } else {
-                setMessage(`Eroare: ${data.error}`);
-            }
-        } catch (err) {
-            setMessage(`Eroare de rețea: ${err.message}`);
+            setMsg(res.ok ? `Succes: ${JSON.stringify(data)}` : `Eroare: ${data.error}`);
+        } catch(e) {
+            setMsg(`Eroare rețea: ${e.message}`);
         }
     };
 
     return (
-        <Box
-            sx={{
-                maxWidth: 400,
-                mx: 'auto',
-                bgcolor: '#000000',
-                p: 4,
-                border: '4px solid #00ffcc',
-                borderRadius: 2,
-                textAlign: 'center',
-                boxShadow: '0 0 20px #00ffcc'
-            }}
-        >
-            <Typography variant="h5" gutterBottom sx={{ color: '#00ffcc' }}>
-                {isRegister ? 'Înregistrare' : 'Autentificare'}
-            </Typography>
-            <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <TextField
-                    label="Username"
-                    variant="filled"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    fullWidth
-                    InputProps={{
-                        style: { backgroundColor: '#ffffff', color: '#000000', fontFamily: '"Press Start 2P", cursive' }
-                    }}
-                />
-                <TextField
-                    label="Password"
-                    variant="filled"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    fullWidth
-                    InputProps={{
-                        style: { backgroundColor: '#ffffff', color: '#000000', fontFamily: '"Press Start 2P", cursive' }
-                    }}
-                />
-                <Button type="submit" variant="contained" color="secondary" fullWidth sx={{ fontFamily: '"Press Start 2P", cursive' }}>
-                    {isRegister ? 'Înregistrează-te' : 'Login'}
-                </Button>
-            </Box>
-            <Button
-                variant="text"
-                onClick={() => setIsRegister(!isRegister)}
-                sx={{ mt: 2, color: '#00ffcc', fontFamily: '"Press Start 2P", cursive' }}
-            >
-                {isRegister ? 'Ai deja cont? Autentifică-te' : 'Nu ai cont? Înregistrează-te'}
-            </Button>
-            {message && (
-                <Typography variant="body2" sx={{ mt: 2, color: '#00ffcc', wordBreak: 'break-all' }}>
-                    {message}
+        <Card sx={{
+            maxWidth: 400,
+            mx: 'auto',
+            bgcolor: '#111',
+            border: '2px solid',
+            borderColor: 'primary.main',
+            boxShadow: '0 0 20px primary.main'
+        }}>
+            <CardContent>
+                <Typography variant="h5" gutterBottom sx={{
+                    color: 'primary.main',
+                    textAlign: 'center',
+                    animation: 'neon 1.5s ease-in-out infinite alternate'
+                }}>
+                    {reg ? 'Înregistrare' : 'Autentificare'}
                 </Typography>
-            )}
-        </Box>
+                <Box component="form" onSubmit={handle} sx={{
+                    display: 'flex', flexDirection: 'column', gap: 2
+                }}>
+                    {[{
+                        label:'Username', value: u, set: setU
+                    },{
+                        label:'Password', value:p, set:setP, type:'password'
+                    }].map((f,i)=>(
+                        <TextField
+                            key={i}
+                            label={f.label}
+                            type={f.type||'text'}
+                            variant="filled"
+                            value={f.value}
+                            onChange={e=>f.set(e.target.value)}
+                            fullWidth
+                            InputProps={{
+                                sx:{
+                                    bgcolor:'#fff',
+                                    color:'#000',
+                                    fontFamily:'"Press Start 2P",cursive'
+                                }
+                            }}
+                        />
+                    ))}
+                    <Button type="submit" variant="outlined" color="secondary" fullWidth>
+                        {reg ? 'Înregistrează-te' : 'Login'}
+                    </Button>
+                </Box>
+                <Button
+                    onClick={()=>setReg(!reg)}
+                    sx={{ mt:2, color:'primary.main', display:'block', mx:'auto' }}
+                >
+                    {reg ? 'Ai deja cont? Autentifică-te' : 'Nu ai cont? Înregistrează-te'}
+                </Button>
+                {msg && (
+                    <Typography variant="body2" sx={{
+                        mt:2, color:'primary.main', wordBreak:'break-all', textAlign:'center'
+                    }}>
+                        {msg}
+                    </Typography>
+                )}
+            </CardContent>
+        </Card>
     );
-};
-
-export default Auth;
+}
