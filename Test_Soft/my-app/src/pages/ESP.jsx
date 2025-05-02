@@ -5,47 +5,56 @@ import {
 } from '@mui/material';
 
 export default function ESP() {
+    // Verificăm dacă utilizatorul este autentificat
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+
     const [devices, setDevices] = useState([]);
     const [err, setErr] = useState('');
 
-    useEffect(()=>{
-        fetch('http://localhost:5000/esps')
-            .then(res=>res.json())
+    useEffect(() => {
+        fetch('http://localhost:5000/esps', {
+            headers: {
+                // Dacă ai nevoie să trimiți token-ul la API:
+                // 'Authorization': `Bearer ${token}`
+            }
+        })
+            .then(res => res.json())
             .then(setDevices)
-            .catch(e=>setErr(e.message));
-    },[]);
+            .catch(e => setErr(e.message));
+    }, [token]);
 
     return (
         <Box sx={{
-            mt:1,
-            textAlign:'center'
+            mt: 1,
+            textAlign: 'center'
         }}>
             <Typography variant="h4" gutterBottom sx={{
-                color:'primary.main',
-                animation:'neon 1.5s ease-in-out infinite alternate'
+                color: 'primary.main',
+                animation: 'neon 1.5s ease-in-out infinite alternate'
             }}>
                 ESP-uri conectate
             </Typography>
             {err && (
-                <Typography sx={{ color:'secondary.main' }}>{err}</Typography>
+                <Typography sx={{ color: 'secondary.main' }}>{err}</Typography>
             )}
-            <Grid container spacing={2} sx={{ mt:2 }}>
-                {devices.map(d=>(
+            <Grid container spacing={2} sx={{ mt: 2 }}>
+                {devices.map(d => (
                     <Grid item xs={12} sm={6} key={d.id}>
                         <Card sx={{
-                            bgcolor:'#111',
-                            border:'1px solid',
-                            borderColor:'primary.main',
-                            boxShadow:'0 0 10px primary.main'
+                            bgcolor: '#111',
+                            border: '1px solid',
+                            borderColor: 'primary.main',
+                            boxShadow: '0 0 10px primary.main'
                         }}>
                             <CardContent>
-                                <Typography sx={{ color:'text.primary', fontSize:'0.8rem' }}>
+                                <Typography sx={{ color: 'text.primary', fontSize: '0.8rem' }}>
                                     {d.device_name}
                                 </Typography>
-                                <Typography sx={{ color:d.status === 'online' ? 'primary.main' : 'secondary.main' }}>
+                                <Typography sx={{ color: d.status === 'online' ? 'primary.main' : 'secondary.main' }}>
                                     {d.status.toUpperCase()}
                                 </Typography>
-                                <Typography variant="caption" sx={{ color:'text.secondary' }}>
+                                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                                     {d.data}
                                 </Typography>
                             </CardContent>

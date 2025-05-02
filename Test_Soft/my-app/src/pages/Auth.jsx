@@ -15,13 +15,19 @@ export default function Auth() {
         const ep = reg ? 'register' : 'login';
         try {
             const res = await fetch(`http://localhost:5000/${ep}`, {
-                method:'POST',
-                headers:{'Content-Type':'application/json'},
-                body:JSON.stringify({ username:u,password:p })
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: u, password: p })
             });
             const data = await res.json();
-            setMsg(res.ok ? `Succes: ${JSON.stringify(data)}` : `Eroare: ${data.error}`);
-        } catch(e) {
+            if (res.ok) {
+                // Stocăm token-ul pentru a verifica autentificarea
+                localStorage.setItem('token', data.token);
+                setMsg(`Succes: ${JSON.stringify(data)}`);
+            } else {
+                setMsg(`Eroare: ${data.error}`);
+            }
+        } catch (e) {
             setMsg(`Eroare rețea: ${e.message}`);
         }
     };
@@ -47,23 +53,23 @@ export default function Auth() {
                     display: 'flex', flexDirection: 'column', gap: 2
                 }}>
                     {[{
-                        label:'Username', value: u, set: setU
-                    },{
-                        label:'Password', value:p, set:setP, type:'password'
-                    }].map((f,i)=>(
+                        label: 'Username', value: u, set: setU
+                    }, {
+                        label: 'Password', value: p, set: setP, type: 'password'
+                    }].map((f, i) => (
                         <TextField
                             key={i}
                             label={f.label}
-                            type={f.type||'text'}
+                            type={f.type || 'text'}
                             variant="filled"
                             value={f.value}
-                            onChange={e=>f.set(e.target.value)}
+                            onChange={e => f.set(e.target.value)}
                             fullWidth
                             InputProps={{
-                                sx:{
-                                    bgcolor:'#fff',
-                                    color:'#000',
-                                    fontFamily:'"Press Start 2P",cursive'
+                                sx: {
+                                    bgcolor: '#fff',
+                                    color: '#000',
+                                    fontFamily: '"Press Start 2P",cursive'
                                 }
                             }}
                         />
@@ -73,14 +79,14 @@ export default function Auth() {
                     </Button>
                 </Box>
                 <Button
-                    onClick={()=>setReg(!reg)}
-                    sx={{ mt:2, color:'primary.main', display:'block', mx:'auto' }}
+                    onClick={() => setReg(!reg)}
+                    sx={{ mt: 2, color: 'primary.main', display: 'block', mx: 'auto' }}
                 >
                     {reg ? 'Ai deja cont? Autentifică-te' : 'Nu ai cont? Înregistrează-te'}
                 </Button>
                 {msg && (
                     <Typography variant="body2" sx={{
-                        mt:2, color:'primary.main', wordBreak:'break-all', textAlign:'center'
+                        mt: 2, color: 'primary.main', wordBreak: 'break-all', textAlign: 'center'
                     }}>
                         {msg}
                     </Typography>

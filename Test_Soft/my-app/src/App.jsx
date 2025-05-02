@@ -7,6 +7,16 @@ import Auth from './pages/Auth';
 import ESP from './pages/ESP';
 
 export default function App() {
+    const token = localStorage.getItem('token');
+
+    // Construim meniul în funcție de autentificare
+    const menuItems = [
+        { to: '/', label: 'Home' },
+        { to: '/auth', label: 'Autentificare' },
+        // Adăugăm ESP-uri doar dacă avem token
+        ...(token ? [{ to: '/esp', label: 'ESP-uri' }] : []),
+    ];
+
     return (
         <Router>
             <AppBar position="static" sx={{
@@ -16,7 +26,7 @@ export default function App() {
                 borderColor: 'primary.main'
             }}>
                 <Toolbar sx={{ justifyContent: 'center', gap: 2 }}>
-                    {['/', '/auth', '/esp'].map((to, i) => (
+                    {menuItems.map(({ to, label }) => (
                         <Button
                             key={to}
                             component="a"
@@ -27,11 +37,12 @@ export default function App() {
                                 animation: 'neon 1.5s ease-in-out infinite alternate'
                             }}
                         >
-                            {['Home','Autentificare','ESP-uri'][i]}
+                            {label}
                         </Button>
                     ))}
                 </Toolbar>
             </AppBar>
+
             <Box component="main" sx={{ mt: 4 }}>
                 <Container maxWidth="md">
                     <Routes>
