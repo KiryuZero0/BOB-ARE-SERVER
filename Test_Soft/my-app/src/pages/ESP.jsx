@@ -1,5 +1,5 @@
 // src/pages/ESP.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
     Box,
     Typography,
@@ -11,48 +11,37 @@ import {
     Alert
 } from '@mui/material';
 import { io } from 'socket.io-client';
+import { useTranslation } from 'react-i18next';
 
-export default function ESP() {
-    // Dacă nu ești autentificat, nu afișăm pagina
+function ESPComponent() {
+    const { t } = useTranslation();
     const token = localStorage.getItem('token');
     if (!token) return null;
 
     const [devices, setDevices] = useState([]);
     const [loading, setLoading] = useState(true);
-
-    // Snackbar pentru erori
     const [openErrSnackbar, setOpenErrSnackbar] = useState(false);
     const [errMessage, setErrMessage] = useState('');
 
+    const handleCloseErrSnackbar = useCallback(() => {
+        setOpenErrSnackbar(false);
+    }, []);
+
     useEffect(() => {
-        // Conectare WebSocket la serverul de ESP-uri
-        const socket = io('http://localhost:5000', {
-            // dacă ai nevoie de autentificare WebSocket:
-            // auth: { token }
-        });
-
-        socket.on('connect', () => {
-            console.log('Socket conectat:', socket.id);
-        });
-
-        // Când primim lista de device-uri, o salvăm și oprim loading-ul
-        socket.on('devices', (data) => {
+        const socket = io('http://localhost:5000');
+        socket.on('devices', data => {
             setDevices(data);
             setLoading(false);
         });
-
-        // Gestionare erori de conexiune
-        socket.on('connect_error', (err) => {
-            setErrMessage(`Eroare Socket: ${err.message}`);
+        socket.on('connect_error', err => {
+            setErrMessage(`${t('error_loading')}: ${err.message}`);
             setOpenErrSnackbar(true);
             setLoading(false);
         });
-
-        // La demontare, deconectăm socket-ul
         return () => {
             socket.disconnect();
         };
-    }, [token]);
+    }, [t]);
 
     return (
         <>
@@ -65,7 +54,7 @@ export default function ESP() {
                         animation: 'neon 1.5s ease-in-out infinite alternate'
                     }}
                 >
-                    ESP-uri conectate
+                    {t('esp_connected')}
                 </Typography>
 
                 <Grid container spacing={2} sx={{ mt: 2 }}>
@@ -75,7 +64,7 @@ export default function ESP() {
                                 <Skeleton variant="rectangular" height={100} />
                             </Grid>
                         ))
-                        : devices.map((d) => (
+                        : devices.map(d => (
                             <Grid item xs={12} sm={6} key={d.id}>
                                 <Card
                                     sx={{
@@ -86,25 +75,17 @@ export default function ESP() {
                                     }}
                                 >
                                     <CardContent>
-                                        <Typography
-                                            sx={{ color: 'text.primary', fontSize: '0.8rem' }}
-                                        >
+                                        <Typography sx={{ color: 'text.primary', fontSize: '0.8rem' }}>
                                             {d.device_name}
                                         </Typography>
                                         <Typography
                                             sx={{
-                                                color:
-                                                    d.status === 'online'
-                                                        ? 'primary.main'
-                                                        : 'secondary.main'
+                                                color: d.status === 'online' ? 'primary.main' : 'secondary.main'
                                             }}
                                         >
-                                            {d.status.toUpperCase()}
+                                            {t(d.status)}
                                         </Typography>
-                                        <Typography
-                                            variant="caption"
-                                            sx={{ color: 'text.secondary' }}
-                                        >
+                                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                                             {d.data}
                                         </Typography>
                                     </CardContent>
@@ -117,17 +98,15 @@ export default function ESP() {
             <Snackbar
                 open={openErrSnackbar}
                 autoHideDuration={4000}
-                onClose={() => setOpenErrSnackbar(false)}
+                onClose={handleCloseErrSnackbar}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
             >
-                <Alert
-                    onClose={() => setOpenErrSnackbar(false)}
-                    severity="error"
-                    sx={{ width: '100%' }}
-                >
+                <Alert onClose={handleCloseErrSnackbar} severity="error" sx={{ width: '100%' }}>
                     {errMessage}
                 </Alert>
             </Snackbar>
         </>
     );
 }
+
+export default React.memo(ESPComponent);

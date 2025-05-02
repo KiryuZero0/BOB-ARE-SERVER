@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+// src/pages/Dashboard.jsx
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import {
     Box,
     Typography,
@@ -18,8 +19,10 @@ import {
     Legend,
     ResponsiveContainer
 } from 'recharts';
+import { useTranslation } from 'react-i18next';
 
-export default function Dashboard() {
+function DashboardComponent() {
+    const { t } = useTranslation();
     const token = localStorage.getItem('token');
     if (!token) return null;
 
@@ -29,21 +32,18 @@ export default function Dashboard() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Fetch lista de ESP-uri
         fetch('http://localhost:5000/esps', {
             headers: { Authorization: `Bearer ${token}` }
         })
             .then(res => res.json())
-            .then(data => setDevices(data))
+            .then(setDevices)
             .catch(console.error);
 
-        // Fetch date istorice pentru grafice
         fetch('http://localhost:5000/esps/history', {
             headers: { Authorization: `Bearer ${token}` }
         })
             .then(res => res.json())
             .then(data => {
-                // Ne așteptăm la un array de obiecte cu { device_id, timestamp, temperature, humidity }
                 setHistory(data);
                 setLoading(false);
             })
@@ -53,13 +53,15 @@ export default function Dashboard() {
             });
     }, [token]);
 
-    const handleChange = (e) => {
+    const handleChange = useCallback(e => {
         setSelectedDevice(e.target.value);
-    };
+    }, []);
 
-    const filteredData = selectedDevice
-        ? history.filter(item => item.device_id === selectedDevice)
-        : history;
+    const filteredData = useMemo(() => {
+        return selectedDevice
+            ? history.filter(item => item.device_id === selectedDevice)
+            : history;
+    }, [history, selectedDevice]);
 
     if (loading) {
         return (
@@ -80,18 +82,18 @@ export default function Dashboard() {
                     animation: 'neon 1.5s ease-in-out infinite alternate'
                 }}
             >
-                Dashboard ESP-uri
+                {t('dashboard')}
             </Typography>
 
             <FormControl fullWidth sx={{ mb: 3 }}>
-                <InputLabel id="device-select-label">Device</InputLabel>
+                <InputLabel id="device-select-label">{t('select_device')}</InputLabel>
                 <Select
                     labelId="device-select-label"
                     value={selectedDevice}
-                    label="Device"
+                    label={t('select_device')}
                     onChange={handleChange}
                 >
-                    <MenuItem value="">Toate</MenuItem>
+                    <MenuItem value="">{t('all')}</MenuItem>
                     {devices.map(d => (
                         <MenuItem key={d.id} value={d.id}>
                             {d.device_name}
@@ -110,14 +112,14 @@ export default function Dashboard() {
                     <Line
                         type="monotone"
                         dataKey="temperature"
-                        name="Temperatură (°C)"
+                        name={t('temperature')}
                         stroke="#00ffcc"
                         dot={false}
                     />
                     <Line
                         type="monotone"
                         dataKey="humidity"
-                        name="Umiditate (%)"
+                        name={t('humidity')}
                         stroke="#ff00ff"
                         dot={false}
                     />
@@ -126,3 +128,5 @@ export default function Dashboard() {
         </Box>
     );
 }
+
+export default React.memo(DashboardComponent);

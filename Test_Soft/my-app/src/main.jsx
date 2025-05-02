@@ -5,26 +5,38 @@ import { ThemeProvider, CssBaseline } from '@mui/material';
 import getTheme from './theme';
 import App from './App';
 import './i18n';
+
 function Root() {
     const [mode, setMode] = useState('dark');
 
-    // Preia preferința salvată sau folosește preferința sistemului
+    // Preluăm preferința temei din localStorage sau din setarea de sistem
     useEffect(() => {
         const saved = localStorage.getItem('themeMode');
         if (saved === 'light' || saved === 'dark') {
             setMode(saved);
         } else {
-            const prefers = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-            setMode(prefers);
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            setMode(prefersDark ? 'dark' : 'light');
         }
     }, []);
 
-    // Salvează când se schimbă
+    // Salvăm preferința ori de câte ori se schimbă
     useEffect(() => {
         localStorage.setItem('themeMode', mode);
     }, [mode]);
 
     const theme = useMemo(() => getTheme(mode), [mode]);
+
+    // Înregistrare Service Worker pentru PWA și offline support
+    useEffect(() => {
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/serviceWorker.js')
+                    .then(reg => console.log('SW registered:', reg.scope))
+                    .catch(err => console.error('SW registration failed:', err));
+            });
+        }
+    }, []);
 
     return (
         <ThemeProvider theme={theme}>

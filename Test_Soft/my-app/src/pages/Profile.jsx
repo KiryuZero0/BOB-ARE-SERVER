@@ -1,17 +1,18 @@
 // src/pages/Profile.jsx
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Card, CardContent, Button } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 export default function Profile() {
+    const { t } = useTranslation();
     const [user, setUser] = useState(null);
     const token = localStorage.getItem('token');
 
     useEffect(() => {
-        // preluăm date de profil; ajustează endpoint-ul după backend
         fetch('http://localhost:5000/profile', {
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
+                Authorization: `Bearer ${token}`
             }
         })
             .then(res => res.json())
@@ -22,37 +23,43 @@ export default function Profile() {
     if (!user) {
         return (
             <Typography sx={{ color: 'text.secondary', textAlign: 'center', mt: 4 }}>
-                Se încarcă datele...
+                {t('loading')}
             </Typography>
         );
     }
 
     return (
         <Box sx={{ maxWidth: 400, mx: 'auto', mt: 4 }}>
-            <Card sx={{ bgcolor: '#111', border: '2px solid', borderColor: 'primary.main', boxShadow: '0 0 20px primary.main' }}>
+            <Card sx={{
+                bgcolor: '#111',
+                border: '2px solid',
+                borderColor: 'primary.main',
+                boxShadow: '0 0 20px primary.main'
+            }}>
                 <CardContent>
-                    <Typography variant="h5" gutterBottom sx={{
-                        color: 'primary.main',
-                        textAlign: 'center',
-                        animation: 'neon 1.5s ease-in-out infinite alternate'
-                    }}>
-                        Profilul meu
+                    <Typography
+                        variant="h5"
+                        gutterBottom
+                        sx={{
+                            color: 'primary.main',
+                            textAlign: 'center',
+                            animation: 'neon 1.5s ease-in-out infinite alternate'
+                        }}
+                    >
+                        {t('my_profile')}
                     </Typography>
                     <Typography sx={{ color: 'text.primary', mb: 1 }}>
-                        Username: {user.username}
+                        {t('username')}: {user.username}
                     </Typography>
                     <Typography sx={{ color: 'text.primary', mb: 3 }}>
-                        Email: {user.email || '–––'}
+                        {t('email')}: {user.email || '–––'}
                     </Typography>
                     <Button
                         variant="outlined"
                         fullWidth
-                        onClick={() => {
-                            // permite actualizarea datelor în viitor
-                            alert('Funcționalitate de editare neimplementată încă.');
-                        }}
+                        onClick={() => alert(t('edit_profile_unimplemented'))}
                     >
-                        Editează profil
+                        {t('edit_profile')}
                     </Button>
                 </CardContent>
             </Card>

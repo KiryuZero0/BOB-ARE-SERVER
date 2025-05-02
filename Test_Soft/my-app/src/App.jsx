@@ -1,4 +1,5 @@
-import React from 'react';
+// src/App.jsx
+import React, { lazy, Suspense, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import {
     AppBar,
@@ -7,38 +8,40 @@ import {
     Container,
     Box,
     IconButton,
-    Tooltip
+    Tooltip,
+    CircularProgress
 } from '@mui/material';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import { useTranslation } from 'react-i18next';
-
-import Home from './pages/Home';
-import Auth from './pages/Auth';
-import ESP from './pages/ESP';
-import Dashboard from './pages/Dashboard';
-import Profile from './pages/Profile';
 import PrivateRoute from './components/PrivateRoute';
 
-function Navbar({ mode, setMode }) {
+// Lazy-loaded pages
+const Home = lazy(() => import('./pages/Home'));
+const Auth = lazy(() => import('./pages/Auth'));
+const ESP = lazy(() => import('./pages/ESP'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Profile = lazy(() => import('./pages/Profile'));
+
+const Navbar = React.memo(function Navbar({ mode, setMode }) {
     const navigate = useNavigate();
     const { t, i18n } = useTranslation();
     const token = localStorage.getItem('token');
 
-    const handleLogout = () => {
+    const handleLogout = useCallback(() => {
         localStorage.removeItem('token');
         navigate('/auth', { replace: true });
-    };
+    }, [navigate]);
 
-    const toggleTheme = () => {
+    const toggleTheme = useCallback(() => {
         setMode(prev => (prev === 'light' ? 'dark' : 'light'));
-    };
+    }, [setMode]);
 
-    const switchLang = () => {
+    const switchLang = useCallback(() => {
         const next = i18n.language === 'ro' ? 'en' : 'ro';
         i18n.changeLanguage(next);
         localStorage.setItem('lang', next);
-    };
+    }, [i18n]);
 
     const menu = [
         { to: '/', label: t('home') },
@@ -49,12 +52,15 @@ function Navbar({ mode, setMode }) {
     ].filter(Boolean);
 
     return (
-        <AppBar position="static" sx={{
-            bgcolor: 'transparent',
-            boxShadow: 'none',
-            borderBottom: '2px solid',
-            borderColor: 'primary.main'
-        }}>
+        <AppBar
+            position="static"
+            sx={{
+                bgcolor: 'transparent',
+                boxShadow: 'none',
+                borderBottom: '2px solid',
+                borderColor: 'primary.main'
+            }}
+        >
             <Toolbar sx={{ justifyContent: 'center', gap: 2, position: 'relative' }}>
                 {menu.map(({ to, label }) => (
                     <Button
@@ -97,44 +103,54 @@ function Navbar({ mode, setMode }) {
             </Toolbar>
         </AppBar>
     );
-}
+});
 
-export default function App({ mode, setMode }) {
+const AppComponent = React.memo(function AppComponent({ mode, setMode }) {
     return (
         <Router>
             <Navbar mode={mode} setMode={setMode} />
             <Box component="main" sx={{ mt: 4 }}>
                 <Container maxWidth="md">
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/auth" element={<Auth />} />
-                        <Route
-                            path="/esp"
-                            element={
-                                <PrivateRoute>
-                                    <ESP />
-                                </PrivateRoute>
-                            }
-                        />
-                        <Route
-                            path="/dashboard"
-                            element={
-                                <PrivateRoute>
-                                    <Dashboard />
-                                </PrivateRoute>
-                            }
-                        />
-                        <Route
-                            path="/profile"
-                            element={
-                                <PrivateRoute>
-                                    <Profile />
-                                </PrivateRoute>
-                            }
-                        />
-                    </Routes>
+                    <Suspense
+                        fallback={
+                            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                                <CircularProgress color="primary" />
+                            </Box>
+                        }
+                    >
+                        <Routes>
+                            <Route path="/" element={<Home />} />
+                            <Route path="/auth" element={<Auth />} />
+                            <Route
+                                path="/esp"
+                                element={
+                                    <PrivateRoute>
+                                        <ESP />
+                                    </PrivateRoute>
+                                }
+                            />
+                            <Route
+                                path="/dashboard"
+                                element={
+                                    <PrivateRoute>
+                                        <Dashboard />
+                                    </PrivateRoute>
+                                }
+                            />
+                            <Route
+                                path="/profile"
+                                element={
+                                    <PrivateRoute>
+                                        <Profile />
+                                    </PrivateRoute>
+                                }
+                            />
+                        </Routes>
+                    </Suspense>
                 </Container>
             </Box>
         </Router>
     );
-}
+});
+
+export default AppComponent;

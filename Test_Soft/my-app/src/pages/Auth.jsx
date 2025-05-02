@@ -1,34 +1,43 @@
+// src/pages/Auth.jsx
 import React, { useState } from 'react';
 import {
-    Box, Typography, Button, Card, CardContent,
-    Snackbar, Alert, TextField
+    Box,
+    Typography,
+    Button,
+    Card,
+    CardContent,
+    Snackbar,
+    Alert,
+    TextField
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { useTranslation } from 'react-i18next';
 
 const schema = yup.object({
     username: yup
         .string()
-        .required('Username este obligatoriu')
-        .min(3, 'Minim 3 caractere'),
+        .required('username_required')
+        .min(3, 'username_min'),
     password: yup
         .string()
-        .required('Parola este obligatorie')
-        .min(6, 'Minim 6 caractere'),
+        .required('password_required')
+        .min(6, 'password_min'),
     confirmPassword: yup
         .string()
-        .when('mode', { // confirm doar la înregistrare
+        .when('mode', {
             is: 'register',
             then: yup
                 .string()
-                .oneOf([yup.ref('password')], 'Parolele nu coincid')
-                .required('Confirmarea parolei este obligatorie'),
+                .oneOf([yup.ref('password')], 'confirm_password_match')
+                .required('confirm_password_required'),
         }),
-    mode: yup.string().oneOf(['login','register']).required(),
+    mode: yup.string().oneOf(['login', 'register']).required()
 });
 
 export default function Auth() {
+    const { t } = useTranslation();
     const [mode, setMode] = useState('register');
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbar, setSnackbar] = useState({ msg: '', sev: 'success' });
@@ -39,11 +48,16 @@ export default function Auth() {
         reset,
         formState: { errors, isSubmitting }
     } = useForm({
-        defaultValues: { username: '', password: '', confirmPassword: '', mode },
-        resolver: yupResolver(schema),
+        defaultValues: {
+            username: '',
+            password: '',
+            confirmPassword: '',
+            mode
+        },
+        resolver: yupResolver(schema)
     });
 
-    const onSubmit = async (data) => {
+    const onSubmit = async data => {
         setOpenSnackbar(false);
         try {
             const res = await fetch(`http://localhost:5000/${data.mode}`, {
@@ -58,15 +72,15 @@ export default function Auth() {
             if (res.ok) {
                 localStorage.setItem('token', result.token);
                 setSnackbar({
-                    msg: data.mode === 'register' ? 'Înregistrare reușită!' : 'Login reușit!',
+                    msg: data.mode === 'register' ? t('register_success') : t('login_success'),
                     sev: 'success'
                 });
                 reset({ ...data, username: '', password: '', confirmPassword: '' });
             } else {
-                setSnackbar({ msg: result.error || 'Eroare server', sev: 'error' });
+                setSnackbar({ msg: result.error || t('server_error'), sev: 'error' });
             }
         } catch (err) {
-            setSnackbar({ msg: `Eroare rețea: ${err.message}`, sev: 'error' });
+            setSnackbar({ msg: t('network_error', { message: err.message }), sev: 'error' });
         } finally {
             setOpenSnackbar(true);
         }
@@ -75,16 +89,21 @@ export default function Auth() {
     return (
         <>
             <Card sx={{
-                maxWidth: 400, mx: 'auto', mt: 4,
-                bgcolor: '#111', border: '2px solid', borderColor: 'primary.main',
+                maxWidth: 400,
+                mx: 'auto',
+                mt: 4,
+                bgcolor: '#111',
+                border: '2px solid',
+                borderColor: 'primary.main',
                 boxShadow: '0 0 20px primary.main'
             }}>
                 <CardContent>
                     <Typography variant="h5" gutterBottom sx={{
-                        color: 'primary.main', textAlign: 'center',
+                        color: 'primary.main',
+                        textAlign: 'center',
                         animation: 'neon 1.5s ease-in-out infinite alternate'
                     }}>
-                        {mode === 'register' ? 'Înregistrare' : 'Autentificare'}
+                        {mode === 'register' ? t('register') : t('login')}
                     </Typography>
                     <Box
                         component="form"
@@ -98,13 +117,13 @@ export default function Auth() {
                             render={({ field }) => (
                                 <TextField
                                     {...field}
-                                    label="Username"
+                                    label={t('username')}
                                     variant="filled"
                                     error={!!errors.username}
-                                    helperText={errors.username?.message}
+                                    helperText={t(errors.username?.message)}
                                     fullWidth
                                     InputProps={{
-                                        sx: { bgcolor: '#fff', color: '#000', fontFamily:'"Press Start 2P",cursive' }
+                                        sx: { bgcolor: '#fff', color: '#000', fontFamily: '"Press Start 2P", cursive' }
                                     }}
                                 />
                             )}
@@ -116,13 +135,13 @@ export default function Auth() {
                                 <TextField
                                     {...field}
                                     type="password"
-                                    label="Password"
+                                    label={t('password')}
                                     variant="filled"
                                     error={!!errors.password}
-                                    helperText={errors.password?.message}
+                                    helperText={t(errors.password?.message)}
                                     fullWidth
                                     InputProps={{
-                                        sx: { bgcolor: '#fff', color: '#000', fontFamily:'"Press Start 2P",cursive' }
+                                        sx: { bgcolor: '#fff', color: '#000', fontFamily: '"Press Start 2P", cursive' }
                                     }}
                                 />
                             )}
@@ -135,13 +154,13 @@ export default function Auth() {
                                     <TextField
                                         {...field}
                                         type="password"
-                                        label="Confirm Password"
+                                        label={t('confirm_password')}
                                         variant="filled"
                                         error={!!errors.confirmPassword}
-                                        helperText={errors.confirmPassword?.message}
+                                        helperText={t(errors.confirmPassword?.message)}
                                         fullWidth
                                         InputProps={{
-                                            sx: { bgcolor: '#fff', color: '#000', fontFamily:'"Press Start 2P",cursive' }
+                                            sx: { bgcolor: '#fff', color: '#000', fontFamily: '"Press Start 2P", cursive' }
                                         }}
                                     />
                                 )}
@@ -153,19 +172,17 @@ export default function Auth() {
                             color="secondary"
                             disabled={isSubmitting}
                         >
-                            {mode === 'register' ? 'Înregistrează-te' : 'Login'}
+                            {mode === 'register' ? t('register') : t('login')}
                         </Button>
                     </Box>
                     <Button
                         onClick={() => {
-                            setMode(prev => prev === 'register' ? 'login' : 'register');
+                            setMode(prev => (prev === 'register' ? 'login' : 'register'));
                             reset({ username: '', password: '', confirmPassword: '' });
                         }}
                         sx={{ mt: 1, color: 'primary.main', display: 'block', mx: 'auto' }}
                     >
-                        {mode === 'register'
-                            ? 'Ai deja cont? Autentifică-te'
-                            : 'Nu ai cont? Înregistrează-te'}
+                        {mode === 'register' ? t('have_account') : t('no_account')}
                     </Button>
                 </CardContent>
             </Card>
