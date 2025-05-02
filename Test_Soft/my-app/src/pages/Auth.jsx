@@ -48,12 +48,7 @@ export default function Auth() {
         reset,
         formState: { errors, isSubmitting }
     } = useForm({
-        defaultValues: {
-            username: '',
-            password: '',
-            confirmPassword: '',
-            mode
-        },
+        defaultValues: { username: '', password: '', confirmPassword: '', mode },
         resolver: yupResolver(schema)
     });
 
@@ -63,24 +58,26 @@ export default function Auth() {
             const res = await fetch(`http://localhost:5000/${data.mode}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    username: data.username,
-                    password: data.password
-                })
+                body: JSON.stringify({ username: data.username, password: data.password })
             });
             const result = await res.json();
             if (res.ok) {
                 localStorage.setItem('token', result.token);
                 setSnackbar({
-                    msg: data.mode === 'register' ? t('register_success') : t('login_success'),
+                    msg: data.mode === 'register'
+                        ? t('register_success')
+                        : t('login_success'),
                     sev: 'success'
                 });
-                reset({ ...data, username: '', password: '', confirmPassword: '' });
+                reset({ username: '', password: '', confirmPassword: '', mode });
             } else {
                 setSnackbar({ msg: result.error || t('server_error'), sev: 'error' });
             }
         } catch (err) {
-            setSnackbar({ msg: t('network_error', { message: err.message }), sev: 'error' });
+            setSnackbar({
+                msg: t('network_error', { message: err.message }),
+                sev: 'error'
+            });
         } finally {
             setOpenSnackbar(true);
         }
@@ -111,6 +108,7 @@ export default function Auth() {
                         onSubmit={handleSubmit(onSubmit)}
                         sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
                     >
+                        {/* Username */}
                         <Controller
                             name="username"
                             control={control}
@@ -118,16 +116,38 @@ export default function Auth() {
                                 <TextField
                                     {...field}
                                     label={t('username')}
-                                    variant="filled"
+                                    variant="outlined"
                                     error={!!errors.username}
                                     helperText={t(errors.username?.message)}
                                     fullWidth
                                     InputProps={{
-                                        sx: { bgcolor: '#fff', color: '#000', fontFamily: '"Press Start 2P", cursive' }
+                                        sx: {
+                                            backgroundColor: 'rgba(255,255,255,0.15)',
+                                            color: 'text.primary',
+                                            borderRadius: 1,
+                                            '& .MuiOutlinedInput-notchedOutline': {
+                                                borderColor: 'primary.main'
+                                            },
+                                            '&:hover .MuiOutlinedInput-notchedOutline': {
+                                                borderColor: 'secondary.main'
+                                            },
+                                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                                borderColor: 'primary.main',
+                                                boxShadow: '0 0 5px currentColor'
+                                            }
+                                        }
+                                    }}
+                                    InputLabelProps={{
+                                        sx: {
+                                            color: 'text.secondary',
+                                            '&.Mui-focused': { color: 'primary.main' }
+                                        }
                                     }}
                                 />
                             )}
                         />
+
+                        {/* Password */}
                         <Controller
                             name="password"
                             control={control}
@@ -136,16 +156,38 @@ export default function Auth() {
                                     {...field}
                                     type="password"
                                     label={t('password')}
-                                    variant="filled"
+                                    variant="outlined"
                                     error={!!errors.password}
                                     helperText={t(errors.password?.message)}
                                     fullWidth
                                     InputProps={{
-                                        sx: { bgcolor: '#fff', color: '#000', fontFamily: '"Press Start 2P", cursive' }
+                                        sx: {
+                                            backgroundColor: 'rgba(255,255,255,0.15)',
+                                            color: 'text.primary',
+                                            borderRadius: 1,
+                                            '& .MuiOutlinedInput-notchedOutline': {
+                                                borderColor: 'primary.main'
+                                            },
+                                            '&:hover .MuiOutlinedInput-notchedOutline': {
+                                                borderColor: 'secondary.main'
+                                            },
+                                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                                borderColor: 'primary.main',
+                                                boxShadow: '0 0 5px currentColor'
+                                            }
+                                        }
+                                    }}
+                                    InputLabelProps={{
+                                        sx: {
+                                            color: 'text.secondary',
+                                            '&.Mui-focused': { color: 'primary.main' }
+                                        }
                                     }}
                                 />
                             )}
                         />
+
+                        {/* Confirm Password */}
                         {mode === 'register' && (
                             <Controller
                                 name="confirmPassword"
@@ -155,17 +197,39 @@ export default function Auth() {
                                         {...field}
                                         type="password"
                                         label={t('confirm_password')}
-                                        variant="filled"
+                                        variant="outlined"
                                         error={!!errors.confirmPassword}
                                         helperText={t(errors.confirmPassword?.message)}
                                         fullWidth
                                         InputProps={{
-                                            sx: { bgcolor: '#fff', color: '#000', fontFamily: '"Press Start 2P", cursive' }
+                                            sx: {
+                                                backgroundColor: 'rgba(255,255,255,0.15)',
+                                                color: 'text.primary',
+                                                borderRadius: 1,
+                                                '& .MuiOutlinedInput-notchedOutline': {
+                                                    borderColor: 'primary.main'
+                                                },
+                                                '&:hover .MuiOutlinedInput-notchedOutline': {
+                                                    borderColor: 'secondary.main'
+                                                },
+                                                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                                    borderColor: 'primary.main',
+                                                    boxShadow: '0 0 5px currentColor'
+                                                }
+                                            }
+                                        }}
+                                        InputLabelProps={{
+                                            sx: {
+                                                color: 'text.secondary',
+                                                '&.Mui-focused': { color: 'primary.main' }
+                                            }
                                         }}
                                     />
                                 )}
                             />
                         )}
+
+                        {/* Submit */}
                         <Button
                             type="submit"
                             variant="outlined"
@@ -175,10 +239,12 @@ export default function Auth() {
                             {mode === 'register' ? t('register') : t('login')}
                         </Button>
                     </Box>
+
+                    {/* Toggle mode */}
                     <Button
                         onClick={() => {
-                            setMode(prev => (prev === 'register' ? 'login' : 'register'));
-                            reset({ username: '', password: '', confirmPassword: '' });
+                            setMode(prev => prev === 'register' ? 'login' : 'register');
+                            reset({ username: '', password: '', confirmPassword: '', mode });
                         }}
                         sx={{ mt: 1, color: 'primary.main', display: 'block', mx: 'auto' }}
                     >
