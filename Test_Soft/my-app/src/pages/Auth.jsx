@@ -14,6 +14,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 const schema = yup.object({
     username: yup.string().required('username_required').min(3, 'username_min'),
@@ -30,6 +31,7 @@ export default function Auth() {
     const [mode, setMode] = useState('login');
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbar, setSnackbar] = useState({ msg: '', sev: 'success' });
+    const navigate = useNavigate();
 
     const {
         handleSubmit,
@@ -67,7 +69,8 @@ export default function Auth() {
                 });
                 reset({ username: '', password: '', confirmPassword: '', mode });
                 // force a full reload so that authenticated views update
-                window.location.reload();
+                //window.location.reload();
+                navigate('/')
             } else {
                 setSnackbar({ msg: result.error || t('server_error'), sev: 'error' });
             }
