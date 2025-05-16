@@ -5,6 +5,8 @@ import { useTranslation } from 'react-i18next';
 
 function HomeComponent() {
     const { t } = useTranslation();
+    const token = localStorage.getItem('token');
+
     const goToAuth = useCallback(() => {
         window.location.href = '/auth';
     }, []);
@@ -34,14 +36,16 @@ function HomeComponent() {
             <Typography variant="body1" sx={{ color: 'text.primary', mb: 3 }}>
                 {t('home_description')}
             </Typography>
-            <Button
-                variant="outlined"
-                color="primary"
-                onClick={goToAuth}
-                sx={{ fontSize: '0.9rem' }}
-            >
-                {t('login')}
-            </Button>
+            {!token && (
+                <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={goToAuth}
+                    sx={{ fontSize: '0.9rem' }}
+                >
+                    {t('login')}
+                </Button>
+            )}
         </Box>
     );
 }
