@@ -16,18 +16,29 @@ import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
 
 const schema = yup.object({
-    username: yup.string().required('username_required').min(3, 'username_min'),
-    password: yup.string().required('password_required').min(6, 'password_min'),
-    confirmPassword: yup.string().when('mode', {
-        is: 'register',
-        then: yup.string().oneOf([yup.ref('password')], 'confirm_password_match').required('confirm_password_required'),
-    }),
+    username: yup
+        .string()
+        .required('username_required')
+        .min(3, 'username_min'),
+    password: yup
+        .string()
+        .required('password_required')
+        .min(6, 'password_min'),
+    confirmPassword: yup
+        .string()
+        .when('mode', {
+            is: 'register',
+            then: yup
+                .string()
+                .oneOf([yup.ref('password')], 'confirm_password_match')
+                .required('confirm_password_required'),
+        }),
     mode: yup.string().oneOf(['login', 'register']).required()
 });
 
 export default function Auth() {
     const { t } = useTranslation();
-    const [mode, setMode] = useState('register');
+    const [mode, setMode] = useState('login');
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbar, setSnackbar] = useState({ msg: '', sev: 'success' });
 
@@ -44,28 +55,37 @@ export default function Auth() {
     const onSubmit = async data => {
         setOpenSnackbar(false);
         try {
-            const res = await fetch(`http://localhost:5000/${data.mode}`, {
+            let sendData;
+            if (data.confirmPassword === '') {
+                sendData = {username: data.username, password: data.password}
+            }
+            else {
+                sendData = {username: data.username, password: data.password, confirmPassword: data.confirmPassword}
+            }
+
+            const res = await fetch(`http://localhost:5000/${mode}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: data.username, password: data.password })
+                body: JSON.stringify(sendData),
             });
             const result = await res.json();
             if (res.ok) {
                 localStorage.setItem('token', result.token);
                 setSnackbar({
-                    msg: data.mode === 'register'
+                    msg: mode === 'register'
                         ? t('register_success')
                         : t('login_success'),
                     sev: 'success'
                 });
                 reset({ username: '', password: '', confirmPassword: '', mode });
-                // force a full reload so that authenticated views update
-                window.location.reload();
             } else {
                 setSnackbar({ msg: result.error || t('server_error'), sev: 'error' });
             }
         } catch (err) {
-            setSnackbar({ msg: t('network_error', { message: err.message }), sev: 'error' });
+            setSnackbar({
+                msg: t('network_error', { message: err.message }),
+                sev: 'error'
+            });
         } finally {
             setOpenSnackbar(true);
         }
@@ -175,7 +195,7 @@ export default function Auth() {
                             )}
                         />
 
-                        {/* Confirm Password (only on register) */}
+                        {/* Confirm Password */}
                         {mode === 'register' && (
                             <Controller
                                 name="confirmPassword"
@@ -217,14 +237,21 @@ export default function Auth() {
                             />
                         )}
 
-                        <Button type="submit" variant="outlined" color="secondary" disabled={isSubmitting}>
+                        {/* Submit */}
+                        <Button
+                            type="submit"
+                            variant="outlined"
+                            color="secondary"
+                            disabled={isSubmitting}
+                        >
                             {mode === 'register' ? t('register') : t('login')}
                         </Button>
                     </Box>
 
+                    {/* Toggle mode */}
                     <Button
                         onClick={() => {
-                            setMode(prev => (prev === 'register' ? 'login' : 'register'));
+                            setMode(prev => prev === 'register' ? 'login' : 'register');
                             reset({ username: '', password: '', confirmPassword: '', mode });
                         }}
                         sx={{ mt: 1, color: 'primary.main', display: 'block', mx: 'auto' }}
@@ -240,7 +267,11 @@ export default function Auth() {
                 onClose={() => setOpenSnackbar(false)}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
             >
-                <Alert onClose={() => setOpenSnackbar(false)} severity={snackbar.sev} sx={{ width: '100%' }}>
+                <Alert
+                    onClose={() => setOpenSnackbar(false)}
+                    severity={snackbar.sev}
+                    sx={{ width: '100%' }}
+                >
                     {snackbar.msg}
                 </Alert>
             </Snackbar>
