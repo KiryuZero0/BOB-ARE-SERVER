@@ -16,23 +16,12 @@ import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
 
 const schema = yup.object({
-    username: yup
-        .string()
-        .required('username_required')
-        .min(3, 'username_min'),
-    password: yup
-        .string()
-        .required('password_required')
-        .min(6, 'password_min'),
-    confirmPassword: yup
-        .string()
-        .when('mode', {
-            is: 'register',
-            then: yup
-                .string()
-                .oneOf([yup.ref('password')], 'confirm_password_match')
-                .required('confirm_password_required'),
-        }),
+    username: yup.string().required('username_required').min(3, 'username_min'),
+    password: yup.string().required('password_required').min(6, 'password_min'),
+    confirmPassword: yup.string().when('mode', {
+        is: 'register',
+        then: yup.string().oneOf([yup.ref('password')], 'confirm_password_match').required('confirm_password_required'),
+    }),
     mode: yup.string().oneOf(['login', 'register']).required()
 });
 
@@ -53,39 +42,37 @@ export default function Auth() {
     });
 
     const onSubmit = async data => {
+        let sendData;
+        if (mode === 'register') {
+            sendData = { username: data.username, password: data.password, confirmPassword: data.confirmPassword };
+        }
+        else {
+            sendData = { username: data.username, password: data.password }
+        }
         setOpenSnackbar(false);
         try {
-            let sendData;
-            if (data.confirmPassword === '') {
-                sendData = {username: data.username, password: data.password}
-            }
-            else {
-                sendData = {username: data.username, password: data.password, confirmPassword: data.confirmPassword}
-            }
-
             const res = await fetch(`http://localhost:5000/${mode}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(sendData),
+                body: JSON.stringify(sendData)
             });
             const result = await res.json();
             if (res.ok) {
                 localStorage.setItem('token', result.token);
                 setSnackbar({
-                    msg: mode === 'register'
+                    msg: data.mode === 'register'
                         ? t('register_success')
                         : t('login_success'),
                     sev: 'success'
                 });
                 reset({ username: '', password: '', confirmPassword: '', mode });
+                // force a full reload so that authenticated views update
+                window.location.reload();
             } else {
                 setSnackbar({ msg: result.error || t('server_error'), sev: 'error' });
             }
         } catch (err) {
-            setSnackbar({
-                msg: t('network_error', { message: err.message }),
-                sev: 'error'
-            });
+            setSnackbar({ msg: t('network_error', { message: err.message }), sev: 'error' });
         } finally {
             setOpenSnackbar(true);
         }
@@ -195,7 +182,7 @@ export default function Auth() {
                             )}
                         />
 
-                        {/* Confirm Password */}
+                        {/* Confirm Password (only on register) */}
                         {mode === 'register' && (
                             <Controller
                                 name="confirmPassword"
@@ -237,21 +224,14 @@ export default function Auth() {
                             />
                         )}
 
-                        {/* Submit */}
-                        <Button
-                            type="submit"
-                            variant="outlined"
-                            color="secondary"
-                            disabled={isSubmitting}
-                        >
+                        <Button type="submit" variant="outlined" color="secondary" disabled={isSubmitting}>
                             {mode === 'register' ? t('register') : t('login')}
                         </Button>
                     </Box>
 
-                    {/* Toggle mode */}
                     <Button
                         onClick={() => {
-                            setMode(prev => prev === 'register' ? 'login' : 'register');
+                            setMode(prev => (prev === 'register' ? 'login' : 'register'));
                             reset({ username: '', password: '', confirmPassword: '', mode });
                         }}
                         sx={{ mt: 1, color: 'primary.main', display: 'block', mx: 'auto' }}
@@ -267,11 +247,7 @@ export default function Auth() {
                 onClose={() => setOpenSnackbar(false)}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
             >
-                <Alert
-                    onClose={() => setOpenSnackbar(false)}
-                    severity={snackbar.sev}
-                    sx={{ width: '100%' }}
-                >
+                <Alert onClose={() => setOpenSnackbar(false)} severity={snackbar.sev} sx={{ width: '100%' }}>
                     {snackbar.msg}
                 </Alert>
             </Snackbar>

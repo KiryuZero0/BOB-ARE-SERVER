@@ -136,6 +136,14 @@ def create_tables():
               password TEXT NOT NULL
             )
         """)
+        c.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id       INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT    UNIQUE NOT NULL,
+            password TEXT    NOT NULL,
+            email    TEXT
+        )
+    ''')
         conn.commit()
     except Exception as e:
         logging.error("Error creating tables: %s", e)
@@ -220,6 +228,34 @@ def profile():
     user = get_jwt_identity()
     logging.info("/profile called by %s", user)
     return jsonify(username=user), 200
+
+@app.route('/profile', methods=['POST'])
+@jwt_required()
+def update_profile():
+    data = request.get_json() or {}
+    new_username = data.get('username')
+    new_email    = data.get('email')
+    if not new_username or not new_email:
+        return jsonify(error='username_and_email_required'), 400
+
+    current_user = get_jwt_identity()
+    conn = get_db_connection()
+    cur  = conn.cursor()
+
+    # actualizează username şi email
+    cur.execute(
+        'UPDATE users SET username = ?, email = ? WHERE username = ?',
+        (new_username, new_email, current_user)
+    )
+    if cur.rowcount == 0:
+        conn.close()
+        return jsonify(error='user_not_found'), 404
+
+    conn.commit()
+    conn.close()
+
+    # întoarce profilul actualizat
+    return jsonify(username=new_username, email=new_email), 200
 
 @app.route('/dashboard', methods=['GET'])
 @jwt_required()
