@@ -39,7 +39,7 @@ function DashboardComponent() {
             .then(setDevices)
             .catch(console.error);
 
-        fetch('http://localhost:5000/esps/history', {
+        fetch('http://localhost:5000/dashboard', {
             headers: { Authorization: `Bearer ${token}` }
         })
             .then(res => res.json())

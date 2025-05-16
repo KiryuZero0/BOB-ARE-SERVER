@@ -38,7 +38,7 @@ const schema = yup.object({
 
 export default function Auth() {
     const { t } = useTranslation();
-    const [mode, setMode] = useState('register');
+    const [mode, setMode] = useState('login');
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbar, setSnackbar] = useState({ msg: '', sev: 'success' });
 
@@ -55,16 +55,23 @@ export default function Auth() {
     const onSubmit = async data => {
         setOpenSnackbar(false);
         try {
-            const res = await fetch(`http://localhost:5000/${data.mode}`, {
+            let sendData;
+            if (data.confirmPassword === '') {
+                sendData = {username: data.username, password: data.password}
+            }
+            else {
+                sendData = {username: data.username, password: data.password, confirmPassword: data.confirmPassword}
+            }
+            const res = await fetch(`http://localhost:5000/${mode}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: data.username, password: data.password })
+                body: JSON.stringify(sendData),
             });
             const result = await res.json();
             if (res.ok) {
                 localStorage.setItem('token', result.token);
                 setSnackbar({
-                    msg: data.mode === 'register'
+                    msg: mode === 'register'
                         ? t('register_success')
                         : t('login_success'),
                     sev: 'success'
