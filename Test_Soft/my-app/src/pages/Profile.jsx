@@ -16,7 +16,7 @@ export default function Profile() {
     const token = localStorage.getItem('token');
 
     useEffect(() => {
-        fetch('http://localhost:5000/profile', {
+        fetch('/api/profile', {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`

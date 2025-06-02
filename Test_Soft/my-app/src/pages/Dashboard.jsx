@@ -32,14 +32,14 @@ function DashboardComponent() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('http://localhost:5000/esps', {
+        fetch('/api/esp', {
             headers: { Authorization: `Bearer ${token}` }
         })
             .then(res => res.json())
             .then(setDevices)
             .catch(console.error);
 
-        fetch('http://localhost:5000/dashboard', {
+        fetch('/api/dashboard', {
             headers: { Authorization: `Bearer ${token}` }
         })
             .then(res => res.json())

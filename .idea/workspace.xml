@@ -4,7 +4,34 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="06e6ca55-a98c-4876-99c0-d8d5d6bf5151" name="Changes" comment="" />
+    <list default="true" id="06e6ca55-a98c-4876-99c0-d8d5d6bf5151" name="Changes" comment="version 1.9">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/@chakra-ui_react.js" beforeDir="false" afterPath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/@chakra-ui_react.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/@chakra-ui_react.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/@chakra-ui_react.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/@mui_material.js" beforeDir="false" afterPath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/@mui_material.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/@mui_material.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/@mui_material.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/@mui_material_styles.js" beforeDir="false" afterPath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/@mui_material_styles.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/@mui_material_styles.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/@mui_material_styles.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/_metadata.json" beforeDir="false" afterPath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/_metadata.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/react-dom.js" beforeDir="false" afterPath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/react-dom.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/react-dom.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/react-dom.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/react-dom_client.js" beforeDir="false" afterPath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/react-dom_client.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/react-dom_client.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/react-dom_client.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/react-router-dom.js" beforeDir="false" afterPath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/react-router-dom.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/react-router-dom.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/react-router-dom.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/react.js" beforeDir="false" afterPath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/react.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/react.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/react.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/react_jsx-dev-runtime.js" beforeDir="false" afterPath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/react_jsx-dev-runtime.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/react_jsx-dev-runtime.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/react_jsx-dev-runtime.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/react_jsx-runtime.js" beforeDir="false" afterPath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/react_jsx-runtime.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/react_jsx-runtime.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/Test_Soft/my-app/node_modules/.vite/deps/react_jsx-runtime.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test_Soft/my-app/server/database.sqlite" beforeDir="false" afterPath="$PROJECT_DIR$/Test_Soft/my-app/server/database.sqlite" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test_Soft/my-app/server/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/Test_Soft/my-app/server/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test_Soft/my-app/src/pages/Dashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Test_Soft/my-app/src/pages/Dashboard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test_Soft/my-app/src/pages/Profile.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Test_Soft/my-app/src/pages/Profile.jsx" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -28,7 +55,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/KiryuZero0/BOB-ARE-SERVER.git&quot;,
-    &quot;accountId&quot;: &quot;63d97ae7-899f-4149-8437-9d256e131b6e&quot;
+    &quot;accountId&quot;: &quot;881bdd77-5a0c-4a55-b4aa-896c95413044&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{
@@ -48,14 +75,17 @@
     "git-widget-placeholder": "mege",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/vanil/Documents/AnulIII/Sem2/TS/Bob/BOB-ARE-SERVER",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_interpreter_path": "C:/Users/vanil/AppData/Roaming/JetBrains/IntelliJIdea2024.3/node/versions/22.15.1/node",
     "nodejs_package_manager_path": "npm",
     "project.structure.last.edited": "Global Libraries",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.2",
-    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2024.3.5\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
+    "settings.editor.selected.configurable": "settings.nodejs",
+    "ts.external.directory.path": "C:\\Users\\vanil\\Documents\\IntelijIdea\\IntelliJ IDEA 2024.3.5\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
     "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
@@ -66,11 +96,16 @@
     ]
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\vanil\Documents\AnulIII\Sem2\TS\Bob\BOB-ARE-SERVER\Test_Soft\my-app\dist" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.25410.129" />
-        <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-IU-251.25410.129" />
+        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.26053.27" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.26053.27" />
       </set>
     </attachedChunks>
   </component>
@@ -86,7 +121,15 @@
       <workItem from="1744792352447" duration="309000" />
       <workItem from="1746183229647" duration="1801000" />
       <workItem from="1747039662345" duration="9000" />
-      <workItem from="1747391973157" duration="1227000" />
+      <workItem from="1747391973157" duration="634000" />
+      <workItem from="1747397284784" duration="122000" />
+      <workItem from="1747397426826" duration="154000" />
+      <workItem from="1747398022592" duration="27000" />
+      <workItem from="1747516003183" duration="1616000" />
+      <workItem from="1747517798364" duration="593000" />
+      <workItem from="1747604141225" duration="4756000" />
+      <workItem from="1747687971232" duration="56000" />
+      <workItem from="1748895077867" duration="1945000" />
     </task>
     <task id="LOCAL-00001" summary="merge acum">
       <option name="closed" value="true" />
@@ -152,15 +195,23 @@
       <option name="project" value="LOCAL" />
       <updated>1746184073512</updated>
     </task>
-    <task id="LOCAL-00009" summary="version 1.7">
+    <task id="LOCAL-00009" summary="version 1.8">
       <option name="closed" value="true" />
-      <created>1747392803278</created>
+      <created>1747395442000</created>
       <option name="number" value="00009" />
       <option name="presentableId" value="LOCAL-00009" />
       <option name="project" value="LOCAL" />
-      <updated>1747392803278</updated>
+      <updated>1747395442000</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="version 1.9">
+      <option name="closed" value="true" />
+      <created>1747395973294</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1747395973294</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -186,7 +237,12 @@
     <MESSAGE value="version 1.4" />
     <MESSAGE value="version 1.5" />
     <MESSAGE value="version 1.6" />
-    <MESSAGE value="version 1.7" />
-    <option name="LAST_COMMIT_MESSAGE" value="version 1.7" />
+    <MESSAGE value="version 1.8" />
+    <MESSAGE value="version 1.9" />
+    <option name="LAST_COMMIT_MESSAGE" value="version 1.9" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

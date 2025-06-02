@@ -3,6 +3,7 @@ import json
 import threading
 import logging
 import sys
+import socket
 from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit
@@ -36,7 +37,8 @@ logger.addHandler(sh)
 
 # Flask + CORS + JWT
 app = Flask(__name__)
-CORS(app)  # will add appropriate Allow-Origin, Allow-Methods etc.
+from flask_cors import CORS
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 app.config["JWT_SECRET_KEY"] = "CHANGE_THIS_TO_A_STRONG_SECRET"
 jwt = JWTManager(app)
 # imediat după jwt = JWTManager(app)
@@ -136,14 +138,6 @@ def create_tables():
               password TEXT NOT NULL
             )
         """)
-        c.execute('''
-        CREATE TABLE IF NOT EXISTS users (
-            id       INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT    UNIQUE NOT NULL,
-            password TEXT    NOT NULL,
-            email    TEXT
-        )
-    ''')
         conn.commit()
     except Exception as e:
         logging.error("Error creating tables: %s", e)
@@ -228,34 +222,6 @@ def profile():
     user = get_jwt_identity()
     logging.info("/profile called by %s", user)
     return jsonify(username=user), 200
-
-@app.route('/profile', methods=['POST'])
-@jwt_required()
-def update_profile():
-    data = request.get_json() or {}
-    new_username = data.get('username')
-    new_email    = data.get('email')
-    if not new_username or not new_email:
-        return jsonify(error='username_and_email_required'), 400
-
-    current_user = get_jwt_identity()
-    conn = get_db_connection()
-    cur  = conn.cursor()
-
-    # actualizează username şi email
-    cur.execute(
-        'UPDATE users SET username = ?, email = ? WHERE username = ?',
-        (new_username, new_email, current_user)
-    )
-    if cur.rowcount == 0:
-        conn.close()
-        return jsonify(error='user_not_found'), 404
-
-    conn.commit()
-    conn.close()
-
-    # întoarce profilul actualizat
-    return jsonify(username=new_username, email=new_email), 200
 
 @app.route('/dashboard', methods=['GET'])
 @jwt_required()
@@ -423,6 +389,126 @@ def update_connected_devices():
     conn.close()
     return jsonify(message="Connected devices updated"), 200
 
+# ─────────────── Endpoint: GET /api/esp ───────────────
+@app.route("/api/esp", methods=["GET"])
+@jwt_required()
+def api_get_esps():
+    """
+    Returnează lista de ESP-uri (devices) ale user-ului curent, 
+    sub forma unui JSON array: [ { "id": <device.id>, "device_name": <esp_id> }, ... ]
+    """
+    # 1. Extragem username-ul din JWT
+    current_username = get_jwt_identity()
+
+    # 2. Luăm user_id numeric
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT id FROM users WHERE username = ?", (current_username,))
+    user_row = cur.fetchone()
+    if not user_row:
+        conn.close()
+        return jsonify(error="user_not_found"), 404
+    user_id = user_row["id"]
+
+    # 3. Colectăm ESP-urile asociate acestui user_id
+    cur.execute("""
+        SELECT id, esp_id 
+          FROM devices 
+         WHERE user_id = ?
+      ORDER BY last_update DESC
+    """, (user_id,))
+    rows = cur.fetchall()
+    conn.close()
+
+    # 4. Construim un array de obiecte: { id, device_name }
+    esp_list = [
+        { "id": row["id"], "device_name": row["esp_id"] }
+        for row in rows
+    ]
+    return jsonify(esp_list), 200
+
+@app.route("/api/dashboard", methods=["GET"])
+@jwt_required()
+def api_get_sensor_history():
+    """
+    Returnează toate citirile (istoricul) senzorilor pentru ESP-urile
+    utilizatorului curent, sub forma unui array de obiecte:
+    [
+      {
+        "device_id": 1,
+        "sensor_type": "DHT11",
+        "timestamp": "2025-06-02 15:48:10",
+        "temperature": 23.4,
+        "humidity": 56.7
+      },
+      {
+        "device_id": 1,
+        "sensor_type": "PIR",
+        "timestamp": "2025-06-02 15:48:10",
+        "motion": true
+      },
+      ...
+    ]
+    """
+    # 1. Identificăm user-ul curent
+    current_username = get_jwt_identity()
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT id FROM users WHERE username = ?", (current_username,))
+    user_row = cur.fetchone()
+    if not user_row:
+        conn.close()
+        return jsonify(error="user_not_found"), 404
+    user_id = user_row["id"]
+
+    # 2. Luăm toate device_id‐urile care aparțin acestui user
+    cur.execute("SELECT id FROM devices WHERE user_id = ?", (user_id,))
+    device_rows = cur.fetchall()
+    device_ids = [r["id"] for r in device_rows]
+    if not device_ids:
+        conn.close()
+        # dacă nu are device-uri, trimitem un array gol
+        return jsonify([]), 200
+
+    # 3. Interogăm tabela sensor_readings pentru aceste device_id‐uri
+    query = f"""
+      SELECT device_id, sensor_type, sensor_values, timestamp
+        FROM sensor_readings
+       WHERE device_id IN ({','.join('?' for _ in device_ids)})
+    """
+    cur.execute(query, tuple(device_ids))
+    rows = cur.fetchall()
+    conn.close()
+
+    result = []
+    for r in rows:
+        device_id    = r["device_id"]
+        sensor_type  = r["sensor_type"]
+        raw_values   = r["sensor_values"]          # ex: '{"temperature":23.4,"humidity":56.7}'
+        ts           = r["timestamp"]              # ex: '2025-06-02 15:48:10'
+
+        try:
+            values_dict = json.loads(raw_values)
+        except Exception:
+            # Dacă JSON-ul e corupt, sărim peste
+            continue
+
+        # Construim obiectul de răspuns
+        entry = {
+            "device_id": device_id,
+            "sensor_type": sensor_type,
+            "timestamp": ts
+        }
+        # “Un-flatten” câmpurile din values_dict
+        for key, val in values_dict.items():
+            entry[key] = val
+
+        result.append(entry)
+
+    # 4. Returnăm totul ca JSON array
+    return jsonify(result), 200
+
+
 # -------- UI & Startup --------
 def show_devices_tkinter():
     logging.info("Launching Tkinter UI")
@@ -449,6 +535,20 @@ def show_devices_tkinter():
     refresh()
     root.mainloop()
 
+def get_local_ip():
+    """Returnează adresa IP locală a mașinii (interfața folosită în LAN)."""
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        # Nu trimite date efectiv, doar stabilește o rută către 8.8.8.8:80
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+    except Exception:
+        ip = "127.0.0.1"
+    finally:
+        s.close()
+    return ip
+
+
 def run_flask():
     logging.info("Starting Flask on port 5000")
     socketio.run(app, host='0.0.0.0', port=5000, debug=False, use_reloader=False)
@@ -456,6 +556,8 @@ def run_flask():
 if __name__ == "__main__":
     logging.info("Initializing app")
     create_tables()
+    local_ip = get_local_ip()
+    logging.info("Server va asculta la adresa IP locală: %s pe portul 5000", local_ip)
     t = threading.Thread(target=run_flask, daemon=True)
     t.start()
     show_devices_tkinter()
